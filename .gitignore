@@ -102,3 +102,15 @@ dist
 
 # TernJS port file
 .tern-port
+
+
+# Adde later
+#.idea
+#*.iml
+out
+gen
+/node_modules/
+/.nyc_output/
+/Report/
+/coverage/
+/.idea/workspace.xml

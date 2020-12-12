@@ -1,0 +1,14 @@
+{
+  "require": [
+    "@babel/register"
+  ],
+  "reporter": [
+    "lcov",
+    "text",
+    "json",
+    "json-summary",
+    "cobertura"
+  ],
+  "sourceMap": false,
+  "instrument": false
+}
