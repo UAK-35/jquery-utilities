@@ -1,3 +1,7 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=b1e6b3a5f7c11e7e16630cbcc6cf970490961172525b342e162ca58b4b0390b9
+
 language: node_js
 
 node_js:
@@ -6,8 +10,17 @@ node_js:
 install:
   - yarn install
 
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
 script:
   - yarn cover
 
 # Send coverage data to Coveralls
-after_script: "cat coverage/lcov.info | coveralls"
+after_success:
+  - "cat coverage/lcov.info | coveralls"
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
