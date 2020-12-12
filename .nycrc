@@ -3,11 +3,7 @@
     "@babel/register"
   ],
   "reporter": [
-    "lcov",
-    "text",
-    "json",
-    "json-summary",
-    "cobertura"
+    "lcovonly"
   ],
   "sourceMap": false,
   "instrument": false

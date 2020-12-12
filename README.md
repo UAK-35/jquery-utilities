@@ -4,6 +4,8 @@ A set of tools based on jQuery
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![npm version](https://badge.fury.io/js/%40uak2020%2Fjquery-utilities.svg)
+[![Build Status](https://travis-ci.com/UAK-35/jquery-utilities.svg?token=b6yC3xZ4n29K1aBw3JL6&branch=main)](https://travis-ci.com/UAK-35/jquery-utilities)
+[![Coverage Status](https://coveralls.io/repos/github/UAK-35/jquery-utilities/badge.svg?branch=main)](https://coveralls.io/github/UAK-35/jquery-utilities?branch=main)
 
 > istanbul (nyc) coverage report
 
