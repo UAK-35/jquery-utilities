@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 
 const { JqAjaxManager, UserInteraction, JsHelper } = require('../index');
-const TestServer = require("../tserver");
+const TestServer = require("../test-assist/tserver");
 
 describe('suite for local server AJAX tests', function () {
 
@@ -23,7 +23,6 @@ describe('suite for local server AJAX tests', function () {
   it('should successfully return html of local page', function (done) {
     ajaxMgr.performAjaxGet(
       'http://localhost:5000/test',
-      null,
       {
         successMessage: 'page loaded',
         successCallback: function (result, url, textStatus) {
@@ -44,7 +43,6 @@ describe('suite for local server AJAX tests', function () {
   it('should successfully return data from local JSON file', function (done) {
     ajaxMgr.performAjaxGetJson(
       'http://localhost:5000/test/json',
-      null,
       {
         successMessage: 'json loaded',
         successCallback: function (result, url, textStatus) {
@@ -66,7 +64,6 @@ describe('suite for local server AJAX tests', function () {
     ajaxMgr.performAjaxPost(
       'http://localhost:5000/test/postraw',
       'id|4+token|sdfa3+geo|us',
-      null,
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -88,7 +85,6 @@ describe('suite for local server AJAX tests', function () {
     ajaxMgr.performAjaxPostGetJson(
       'http://localhost:5000/test/postrawforjson',
       'id|4+token|sdfa3+geo|us',
-      null,
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -110,7 +106,6 @@ describe('suite for local server AJAX tests', function () {
     ajaxMgr.performAjaxPostForm(
       'http://localhost:5000/test/postform',
       'id=4&token=sdfa3&geo=us',
-      null,
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -132,7 +127,6 @@ describe('suite for local server AJAX tests', function () {
     ajaxMgr.performAjaxPostFormGetJson(
       'http://localhost:5000/test/postformforjson',
       'id=4&token=sdfa3&geo=us',
-      null,
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -155,7 +149,6 @@ describe('suite for local server AJAX tests', function () {
     ajaxMgr.performAjaxPostJson(
       'http://localhost:5000/test/postjson',
       postData,
-      null,
       {
         successMessage: 'json submitted',
         successCallback: function (result, url, textStatus) {
@@ -190,9 +183,6 @@ describe('suite for cross domain live server AJAX tests', function () {
   it('should return error for cors request online', function (done) {
     ajaxMgr.performCrossDomainAjaxGet(
       'https://www.google.com/',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'page loaded',
         successCallback: function (result, url, textStatus) {
@@ -206,16 +196,16 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('error');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
   it('should successfully return html of an online page', function (done) {
     ajaxMgr.performCrossDomainAjaxGet(
       'https://uak2020.herokuapp.com/test',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'page loaded',
         successCallback: function (result, url, textStatus) {
@@ -229,16 +219,16 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
   it('should successfully return json present at given uri online', function (done) {
     ajaxMgr.performCrossDomainAjaxGetJson(
       'https://uak2020.herokuapp.com/test/json',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'json loaded',
         successCallback: function (result, url, textStatus) {
@@ -252,7 +242,10 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
@@ -260,9 +253,6 @@ describe('suite for cross domain live server AJAX tests', function () {
     ajaxMgr.performCrossDomainAjaxPost(
       'https://uak2020.herokuapp.com/test/postraw',
       'id|4+token|sdfa3+geo|us',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -276,7 +266,10 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
@@ -284,9 +277,6 @@ describe('suite for cross domain live server AJAX tests', function () {
     ajaxMgr.performCrossDomainAjaxPostGetJson(
       'https://uak2020.herokuapp.com/test/postrawforjson',
       'id|4+token|sdfa3+geo|us',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -300,7 +290,10 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
@@ -308,9 +301,6 @@ describe('suite for cross domain live server AJAX tests', function () {
     ajaxMgr.performCrossDomainAjaxPostForm(
       'https://uak2020.herokuapp.com/test/postform',
       'id=4&token=sdfa3&geo=us',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -324,7 +314,10 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
@@ -332,9 +325,6 @@ describe('suite for cross domain live server AJAX tests', function () {
     ajaxMgr.performCrossDomainAjaxPostFormGetJson(
       'https://uak2020.herokuapp.com/test/postformforjson',
       'id=4&token=sdfa3&geo=us',
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'data submitted',
         successCallback: function (result, url, textStatus) {
@@ -348,7 +338,10 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 
@@ -357,9 +350,6 @@ describe('suite for cross domain live server AJAX tests', function () {
     ajaxMgr.performCrossDomainAjaxPostJson(
       'https://uak2020.herokuapp.com/test/postjson',
       postData,
-      [
-        {name: 'origin', value: 'http://localhost'},
-      ],
       {
         successMessage: 'json submitted',
         successCallback: function (result, url, textStatus) {
@@ -373,7 +363,10 @@ describe('suite for cross domain live server AJAX tests', function () {
           expect(textStatus).to.equal('success');
           done(errorThrown);
         }
-      }
+      },
+      [
+        {name: 'origin', value: 'http://localhost'},
+      ]
     );
   });
 

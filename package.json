@@ -1,11 +1,12 @@
 {
   "name": "@uak2020/jquery-utilities",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A set of tools based on jQuery",
   "main": "index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha",
-    "cover": "cross-env NODE_ENV=test nyc mocha"
+    "cover": "cross-env NODE_ENV=test nyc mocha",
+    "make-badges": "istanbul-badges-readme"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
     "jsdom": "^16.4.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.10",
     "@babel/register": "^7.12.10",
@@ -40,6 +42,7 @@
     "coveralls": "^3.1.0",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
+    "istanbul-badges-readme": "^1.2.0",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
     "path": "^0.12.7"

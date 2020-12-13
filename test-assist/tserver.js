@@ -26,42 +26,52 @@ class TestServer {
     this.app = express();
   }
 
-  setUp() {
-    this.app.use(cors())
+  _handleGetFile(filename) {
+    return function (req, res) {
+      res.sendFile(path.join(__dirname + '/' + filename));
+    };
+  }
 
-    this.app.get('/test', function(req, res) {
-      res.sendFile(path.join(__dirname + '/example.html'));
-    });
-    this.app.get('/test/json', function(req, res) {
-      res.sendFile(path.join(__dirname + '/test-data.json'));
-    });
-    this.app.post('/test/postraw', rawBody, function(req, res) {
+  _handlePostRaw() {
+    return function (req, res) {
       res.setHeader('Content-Type', 'text/plain')
       res.write('you posted:\n')
       res.end(req.rawBody);
-    });
-    this.app.post('/test/postrawforjson', rawBody, function(req, res) {
+    };
+  }
+
+  _handlePostRawForJson() {
+    return function (req, res) {
       res.json({
         "method": req.method,
         "body": req.rawBody
       });
-    });
-    this.app.post('/test/postform', urlencodedParser, function(req, res) {
+    };
+  }
+
+  _handlePostForm() {
+    return function (req, res) {
       const user_id = req.body.id;
       const token = req.body.token;
       const geo = req.body.geo;
       res.setHeader('Content-Type', 'text/plain')
       res.write('you posted:\n')
       res.end(user_id + ' ' + token + ' ' + geo);
-    });
-    this.app.post('/test/postformforjson', urlencodedParser, function(req, res) {
+    };
+  }
+
+  _handlePostFormForJson() {
+    return function (req, res) {
       res.json({
         "user_id": req.body.id,
         "token": req.body.token,
         "geo": req.body.geo
       });
-    });
-    this.app.post('/test/postjson', jsonParser, function(req, res) {
+    };
+  }
+
+  _handlePostJson() {
+    return function (req, res) {
       res.json({
         "id": req.body.id,
         "mail": req.body.email,
@@ -69,10 +79,25 @@ class TestServer {
         "lname": req.body.last_name,
         "avatar": req.body.avatar
       });
-    });
-    this.testServer = this.app.listen(PORT, function () {
-      console.log(`CORS-enabled web TEST server listening on port ${ PORT }`)
-    })
+    };
+  }
+
+  _onListenStart() {
+    return function () {
+      console.log(`CORS-enabled web TEST server listening on port ${PORT}`)
+    };
+  }
+
+  setUp() {
+    this.app.use(cors())
+    this.app.get('/test', this._handleGetFile('example.html'));
+    this.app.get('/test/json', this._handleGetFile('test-data.json'));
+    this.app.post('/test/postraw', rawBody, this._handlePostRaw());
+    this.app.post('/test/postrawforjson', rawBody, this._handlePostRawForJson());
+    this.app.post('/test/postform', urlencodedParser, this._handlePostForm());
+    this.app.post('/test/postformforjson', urlencodedParser, this._handlePostFormForJson());
+    this.app.post('/test/postjson', jsonParser, this._handlePostJson());
+    this.testServer = this.app.listen(PORT, this._onListenStart())
   }
 
   tearDown () {
