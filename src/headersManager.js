@@ -17,11 +17,11 @@ class JqAjaxHeadersManager {
   }
 
   _addContentTypeRequestHeader(contentType) {
-    this._addToHeaders([{name: 'Content-Type', value: contentType}])
+    if (contentType.length > 0) this._addToHeaders([{name: 'Content-Type', value: contentType}])
   }
 
   _addAcceptResponseRequestHeader(contentType) {
-    this._addToHeaders([{name: 'Accept', value: contentType}])
+    if (contentType.length > 0) this._addToHeaders([{name: 'Accept', value: contentType}])
   }
 
   setForGet(headers, responseAcceptType) {
@@ -31,31 +31,35 @@ class JqAjaxHeadersManager {
   }
 
   _getContentType(requestContentType) {
-    let contentType = ''
-    if (requestContentType && requestContentType.length > 0) {
-      if (requestContentType === 'raw') contentType = 'text/plain'
-      else if (requestContentType === 'json') contentType = 'application/json'
-      else if (requestContentType === 'form') contentType = 'application/x-www-form-urlencoded'
-      else if (requestContentType === 'multi-part-form') contentType = 'multipart/form-data'
+    switch (requestContentType) {
+      case 'raw':
+        return 'text/plain'
+      case 'json':
+        return 'application/json'
+      case 'form':
+        return 'application/x-www-form-urlencoded'
+      // case 'multi-part-form':
+      //   return 'multipart/form-data'
+      default:
+        return ''
     }
-    return contentType
   }
 
   _getAcceptType(responseAcceptType) {
-    let acceptType = ''
-    if (responseAcceptType && responseAcceptType.length > 0) {
-      if (responseAcceptType === 'raw') acceptType = 'text/plain'
-      else if (responseAcceptType === 'json') acceptType = 'application/json'
+    switch (responseAcceptType) {
+      case 'raw':
+        return 'text/plain'
+      case 'json':
+        return 'application/json'
+      default:
+        return ''
     }
-    return acceptType
   }
 
   setForPost(headers, requestContentType, responseAcceptType) {
     this._addToHeaders(headers)
-    let contentType = this._getContentType(requestContentType)
-    if (contentType.length > 0) this._addContentTypeRequestHeader(contentType)
-    let acceptType = this._getAcceptType(responseAcceptType)
-    if (acceptType.length > 0) this._addAcceptResponseRequestHeader(acceptType)
+    this._addContentTypeRequestHeader(this._getContentType(requestContentType))
+    this._addAcceptResponseRequestHeader(this._getAcceptType(responseAcceptType))
   }
 }
 
