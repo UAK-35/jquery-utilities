@@ -24,10 +24,20 @@ class JqAjaxHeadersManager {
     if (contentType.length > 0) this._addToHeaders([{name: 'Accept', value: contentType}])
   }
 
+  _getAcceptType(responseAcceptType) {
+    switch (responseAcceptType) {
+      case 'raw':
+        return 'text/plain'
+      case 'json':
+        return 'application/json'
+      default:
+        return ''
+    }
+  }
+
   setForGet(headers, responseAcceptType) {
     this._addToHeaders(headers)
-    if (responseAcceptType === 'raw') this._addAcceptResponseRequestHeader('text/plain')
-    else if (responseAcceptType === 'json') this._addAcceptResponseRequestHeader('application/json')
+    this._addAcceptResponseRequestHeader(this._getAcceptType(responseAcceptType))
   }
 
   _getContentType(requestContentType) {
@@ -40,17 +50,6 @@ class JqAjaxHeadersManager {
         return 'application/x-www-form-urlencoded'
       // case 'multi-part-form':
       //   return 'multipart/form-data'
-      default:
-        return ''
-    }
-  }
-
-  _getAcceptType(responseAcceptType) {
-    switch (responseAcceptType) {
-      case 'raw':
-        return 'text/plain'
-      case 'json':
-        return 'application/json'
       default:
         return ''
     }

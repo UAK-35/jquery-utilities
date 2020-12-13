@@ -19,6 +19,11 @@ class JqAjaxManager {
 
   // GET methods below (LOCAL)
 
+  performAjaxInvalid(url, successOptions, failureOptions, headers) {
+    this._headersManager.setForGet(headers, 'xyz')
+    this._ajaxHandler.performAjaxGet(url, successOptions, failureOptions, this._headersManager.headers)
+  }
+
   performAjaxGet(url, successOptions, failureOptions, headers) {
     this._headersManager.setForGet(headers, 'raw')
     this._ajaxHandler.performAjaxGet(url, successOptions, failureOptions, this._headersManager.headers)
@@ -42,6 +47,11 @@ class JqAjaxManager {
   }
 
   // POST methods below (LOCAL)
+
+  performAjaxPostInvalid(url, postData, successOptions, failureOptions, headers) {
+    this._headersManager.setForPost(headers, 'xyz', 'def')
+    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers)
+  }
 
   performAjaxPost(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'raw', 'raw')

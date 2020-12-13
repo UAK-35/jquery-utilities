@@ -21,6 +21,27 @@ describe('suite for local server AJAX tests', () => {
     testServer.tearDown()
   })
 
+  it('should return error for invalid/missing request-response accept header', (done) => {
+    ajaxMgr.performAjaxInvalid(
+      'http://localhost:5000/test',
+      {
+        successMessage: 'page loaded',
+        // eslint-disable-next-line no-unused-vars
+        successCallback: function (result, url, textStatus) {
+          expect(textStatus).to.equal('success')
+          done()
+        },
+      },
+      {
+        failureMessage: 'page load error',
+        failureCallback: function (textStatus, errorThrown) {
+          expect(textStatus).to.equal('error')
+          done(errorThrown)
+        },
+      }
+    )
+  })
+
   it('should successfully return html of local page', (done) => {
     ajaxMgr.performAjaxGet(
       'http://localhost:5000/test',
@@ -57,6 +78,28 @@ describe('suite for local server AJAX tests', () => {
         failureMessage: 'json load error',
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
+          done(errorThrown)
+        },
+      }
+    )
+  })
+
+  it('should return error for invalid/missing request-response accept header or request content type header', (done) => {
+    ajaxMgr.performAjaxPostInvalid(
+      'http://localhost:5000/test',
+      'id|4+token|sdfa3+geo|us',
+      {
+        successMessage: 'page loaded',
+        // eslint-disable-next-line no-unused-vars
+        successCallback: function (result, url, textStatus) {
+          expect(textStatus).to.equal('success')
+          done()
+        },
+      },
+      {
+        failureMessage: 'page load error',
+        failureCallback: function (textStatus, errorThrown) {
+          expect(textStatus).to.equal('error')
           done(errorThrown)
         },
       }
@@ -343,7 +386,7 @@ describe('suite for cross domain live server AJAX tests', () => {
   })
 
   it('should successfully post JSON data to live server', (done) => {
-    const postData = '{"id": 1, "email": "test.mail@example.com", "first_name": "Test", "last_name": "User", "avatar": "https://reqres.in/img/faces/2-image.jpg"}'
+    const postData = {id: 1, email: 'test.mail@example.com', first_name: 'Test', last_name: 'User', avatar: 'https://reqres.in/img/faces/2-image.jpg'}
     ajaxMgr.performCrossDomainAjaxPostJson(
       'https://uak2020.herokuapp.com/test/postjson',
       postData,

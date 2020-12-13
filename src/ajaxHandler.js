@@ -52,6 +52,8 @@ class JqAjaxHandler {
     // if (!headers) headers = [{name: 'x-requested-with', value: 'XMLHttpRequest'}]
     // else
     headers.push({name: 'x-requested-with', value: 'XMLHttpRequest'})
+    if (headers.find((h) => h.name === 'Accept') === undefined) throw new Error('Accept header not provided or invalid')
+    if (options.type === 'POST' && headers.find((h) => h.name === 'Content-Type') === undefined) throw new Error('Content-Type header not provided or invalid')
 
     if (!ajaxOptions.headers) {
       ajaxOptions.headers = {}
@@ -132,7 +134,12 @@ class JqAjaxHandler {
     }
     ajaxOptions = Object.assign(this._defaultOptions, ajaxOptions)
 
-    this._prepareOptions(options, ajaxOptions, headers, corsRequest)
+    try {
+      this._prepareOptions(options, ajaxOptions, headers, corsRequest)
+    } catch (e) {
+      if (failureOptions.failureCallback) failureOptions.failureCallback('error', null)
+      return
+    }
 
     this._userInteraction.logjson('JUST-BEFORE-AJAX-CALL: ', ajaxOptions)
     if (options.data) {
