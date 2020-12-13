@@ -17,7 +17,7 @@ class JqAjaxManager {
     this._ajaxHandler.jsHelper = value
   }
 
-  // GET methods below
+  // GET methods below (LOCAL)
 
   performAjaxGet(url, successOptions, failureOptions, headers) {
     this._headersManager.setForGet(headers, 'raw')
@@ -29,6 +29,8 @@ class JqAjaxManager {
     this._ajaxHandler.performAjaxGet(url, successOptions, failureOptions, this._headersManager.headers)
   }
 
+  // GET methods below (CORS)
+
   performCrossDomainAjaxGet(url, successOptions, failureOptions, headers) {
     this._headersManager.setForGet(headers, 'raw')
     this._ajaxHandler.performAjaxGet(url, successOptions, failureOptions, this._headersManager.headers, true)
@@ -39,7 +41,7 @@ class JqAjaxManager {
     this._ajaxHandler.performAjaxGet(url, successOptions, failureOptions, this._headersManager.headers, true)
   }
 
-  // POST methods below
+  // POST methods below (LOCAL)
 
   performAjaxPost(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'raw', 'raw')
@@ -71,34 +73,36 @@ class JqAjaxManager {
     this._ajaxHandler.performAjaxPostJson(url, postData, successOptions, failureOptions, this._headersManager.headers)
   }
 
+  // POST methods below (CORS)
+
   performCrossDomainAjaxPost(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'raw', 'raw')
-    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers)
+    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers, true)
   }
 
   performCrossDomainAjaxPostGetJson(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'raw', 'json')
-    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers)
+    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers, true)
   }
 
   performCrossDomainAjaxPostForm(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'form', 'raw')
-    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers)
+    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers, true)
   }
 
   performCrossDomainAjaxPostFormGetJson(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'form', 'json')
-    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers)
+    this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers, true)
   }
 
   // performCrossDomainAjaxPostMultiPartFormGetJson(url, postData, successOptions, failureOptions, headers) {
   //   this._headersManager.setForPost(headers, 'multi-part-form', 'json');
-  //   this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers);
+  //   this._ajaxHandler.performAjaxPost(url, postData, successOptions, failureOptions, this._headersManager.headers, true);
   // }
 
   performCrossDomainAjaxPostJson(url, postData, successOptions, failureOptions, headers) {
     this._headersManager.setForPost(headers, 'json', 'json')
-    this._ajaxHandler.performAjaxPostJson(url, postData, successOptions, failureOptions, this._headersManager.headers)
+    this._ajaxHandler.performAjaxPostJson(url, postData, successOptions, failureOptions, this._headersManager.headers, true)
   }
 }
 

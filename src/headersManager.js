@@ -30,24 +30,32 @@ class JqAjaxHeadersManager {
     else if (responseAcceptType === 'json') this._addAcceptResponseRequestHeader('application/json')
   }
 
-  setForPost(headers, requestContentType, responseAcceptType) {
-    this._addToHeaders(headers)
-
+  _getContentType(requestContentType) {
+    let contentType = ''
     if (requestContentType && requestContentType.length > 0) {
-      let contentType = ''
       if (requestContentType === 'raw') contentType = 'text/plain'
       else if (requestContentType === 'json') contentType = 'application/json'
       else if (requestContentType === 'form') contentType = 'application/x-www-form-urlencoded'
       else if (requestContentType === 'multi-part-form') contentType = 'multipart/form-data'
-      if (contentType.length > 0) this._addContentTypeRequestHeader(contentType)
     }
+    return contentType
+  }
 
+  _getAcceptType(responseAcceptType) {
+    let acceptType = ''
     if (responseAcceptType && responseAcceptType.length > 0) {
-      let acceptType = ''
       if (responseAcceptType === 'raw') acceptType = 'text/plain'
       else if (responseAcceptType === 'json') acceptType = 'application/json'
-      if (acceptType.length > 0) this._addAcceptResponseRequestHeader(acceptType)
     }
+    return acceptType
+  }
+
+  setForPost(headers, requestContentType, responseAcceptType) {
+    this._addToHeaders(headers)
+    let contentType = this._getContentType(requestContentType)
+    if (contentType.length > 0) this._addContentTypeRequestHeader(contentType)
+    let acceptType = this._getAcceptType(responseAcceptType)
+    if (acceptType.length > 0) this._addAcceptResponseRequestHeader(acceptType)
   }
 }
 

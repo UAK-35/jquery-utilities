@@ -66,7 +66,7 @@ class JqAjaxHandler {
     }
   }
 
-  _onSuccess(ajaxCallDetails, successOptions, options, failureOptions) {
+  _onSuccess(ajaxCallDetails, successOptions, options) {
     const $this = this
     return function (result, textStatus, jqXHR) {
       $this._logDetails($this._userInteraction, $this._jsHelper, result, textStatus, jqXHR, ajaxCallDetails)
@@ -77,13 +77,6 @@ class JqAjaxHandler {
         }
         if (successOptions.successCallback) {
           successOptions.successCallback(result, options.url, textStatus)
-        }
-      } else {
-        if (failureOptions.failureMessage) {
-          $this._userInteraction.errorAlert(failureOptions.failureMessage)
-        }
-        if (failureOptions.failureCallback) {
-          failureOptions.failureCallback(textStatus, 'error')
         }
       }
     }
@@ -135,7 +128,7 @@ class JqAjaxHandler {
       beforeSend: this._onBeforeSend(),
       complete: this._onComplete(options),
       error: this._onError(ajaxCallDetails, failureOptions),
-      success: this._onSuccess(ajaxCallDetails, successOptions, options, failureOptions),
+      success: this._onSuccess(ajaxCallDetails, successOptions, options),
     }
     ajaxOptions = Object.assign(this._defaultOptions, ajaxOptions)
 
