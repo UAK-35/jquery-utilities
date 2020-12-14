@@ -11,10 +11,13 @@ module.exports = {
     "sourceType": "module"
   },
   "parser": "babel-eslint",
+  "plugins": ["sonarjs"],
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:sonarjs/recommended"
   ],
   "rules": {
+    "sonarjs/cognitive-complexity": ["error", 5],
     "no-console": 0,
     "no-unused-vars": ["warn", { "vars": "all", "args": "all" } ],
     "no-undef": ["warn"],

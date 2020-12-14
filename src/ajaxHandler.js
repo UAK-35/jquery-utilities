@@ -12,6 +12,7 @@ class JqAjaxHandler {
     type: 'GET',
     cache: false,
     async: true,
+    headers: {},
   }
 
   constructor() {}
@@ -25,47 +26,39 @@ class JqAjaxHandler {
   }
 
   _logDetails(userInformer, jsAux, result, textStatus, jqXHR, ajaxCallDetails) {
+    const excerptLength = 200
     // userInformer = this.#_userInteraction;
     // jsAux = this.#_jsHelper;
     console.group('AJAX SUCCESS')
-    userInformer.logit('XHR-status = ' + jqXHR.status + '; XHR-response-text = ' + jsAux.excerpt(jqXHR.responseText, 200))
+    userInformer.logit('XHR-status = ' + jqXHR.status + '; XHR-response-text = ' + jsAux.excerpt(jqXHR.responseText, excerptLength))
     userInformer.logit('status = ' + textStatus)
     userInformer.logjson('AJAX ajax call details = ', ajaxCallDetails)
-    if (jsAux.isStringVar(result) && result.indexOf('<!DOCTYPE ') === 0) {
-      userInformer.logit('DATA RECEIVED - HTML PAGE = ' + jsAux.excerpt(result, 200))
-    } else {
-      if (jsAux.isStringVar(result)) {
-        userInformer.logit('DATA RECEIVED - STRING/TEXT = ' + result)
-      } else userInformer.logjson('DATA RECEIVED - JSON = ', result)
-    }
+    if (jsAux.isStringVar(result)) {
+      if (result.indexOf('<!DOCTYPE ') === 0) userInformer.logit('DATA RECEIVED - HTML PAGE = ' + jsAux.excerpt(result, excerptLength))
+      else userInformer.logit('DATA RECEIVED - STRING/TEXT = ' + result)
+    } else userInformer.logjson('DATA RECEIVED - JSON = ', result)
     console.groupEnd()
   }
 
-  _prepareOptions(options, ajaxOptions, headers, corsRequest) {
-    if (options.url) {
-      ajaxOptions.url = options.url
-    }
-    if (options.type) {
-      ajaxOptions.type = options.type
-    }
-
-    // if (!headers) headers = [{name: 'x-requested-with', value: 'XMLHttpRequest'}]
-    // else
+  _prepareOptions(options, headers, corsRequest) {
     headers.push({name: 'x-requested-with', value: 'XMLHttpRequest'})
-    if (headers.find((h) => h.name === 'Accept') === undefined) throw new Error('Accept header not provided or invalid')
-    if (options.type === 'POST' && headers.find((h) => h.name === 'Content-Type') === undefined) throw new Error('Content-Type header not provided or invalid')
 
-    if (!ajaxOptions.headers) {
-      ajaxOptions.headers = {}
-    }
-    for (let h = 0; h < headers.length; h++) {
-      ajaxOptions.headers[headers[h]['name']] = headers[h]['value']
-    }
+    let ajaxOptions = this._defaultOptions
+    if (options.url) ajaxOptions.url = options.url
+    if (options.type) ajaxOptions.type = options.type
+    for (let h = 0; h < headers.length; h++) ajaxOptions.headers[headers[h]['name']] = headers[h]['value']
 
     if (corsRequest) {
       // ajaxOptions.crossDomain = true;
       ajaxOptions.crossOrigin = true
     }
+    this._userInteraction.logit('corsRequest = ' + corsRequest)
+
+    if (options.data) {
+      this._userInteraction.logit('sending post data : ' + options.data)
+      ajaxOptions.data = options.data
+    }
+    return ajaxOptions
   }
 
   _onSuccess(ajaxCallDetails, successOptions, options) {
@@ -120,36 +113,43 @@ class JqAjaxHandler {
     }
   }
 
+  _validateHeaders(headers, requestMethod) {
+    const hasAcceptHeader = headers.find((h) => h.name === 'Accept') === undefined
+    const hasContentTypeHeader = headers.find((h) => h.name === 'Content-Type') === undefined
+    let exceptionMessage = ''
+    if (hasAcceptHeader) exceptionMessage = 'Accept header not provided or invalid'
+    if (requestMethod === 'POST' && hasContentTypeHeader) exceptionMessage = 'Content-Type header not provided or invalid'
+    if (exceptionMessage.length > 0) throw new Error(exceptionMessage)
+  }
+
+  _validateOptions(options) {
+    if (options.type === 'POST' && !options.data) throw new Error('POST request has no data to send')
+  }
+
   _performAjax(options, successOptions, failureOptions, headers, corsRequest) {
     if (corsRequest === null || corsRequest === undefined) corsRequest = false
-    this._userInteraction.logit('corsRequest = ' + corsRequest)
 
     const ajaxCallDetails = {corsRequest: corsRequest, httpMethod: options.type, url: options.url}
 
-    let ajaxOptions = {
-      beforeSend: this._onBeforeSend(),
-      complete: this._onComplete(options),
-      error: this._onError(ajaxCallDetails, failureOptions),
-      success: this._onSuccess(ajaxCallDetails, successOptions, options),
-    }
-    ajaxOptions = Object.assign(this._defaultOptions, ajaxOptions)
-
     try {
-      this._prepareOptions(options, ajaxOptions, headers, corsRequest)
+      this._validateHeaders(headers, options.type)
+      this._validateOptions(options)
+      let ajaxOptions = this._prepareOptions(options, headers, corsRequest)
+      this._userInteraction.logjson('JUST-BEFORE-AJAX-CALL: ', ajaxOptions)
+
+      ajaxOptions = Object.assign(ajaxOptions, {
+        beforeSend: this._onBeforeSend(),
+        complete: this._onComplete(options),
+        error: this._onError(ajaxCallDetails, failureOptions),
+        success: this._onSuccess(ajaxCallDetails, successOptions, options),
+      })
+
+      ajaxCallDetails.headers = ajaxOptions.headers
+      ajaxCallDetails.postData = options.data
+      $.ajax(ajaxOptions)
     } catch (e) {
       if (failureOptions.failureCallback) failureOptions.failureCallback('error', null)
-      return
     }
-
-    this._userInteraction.logjson('JUST-BEFORE-AJAX-CALL: ', ajaxOptions)
-    if (options.data) {
-      this._userInteraction.logit('sending post data : ' + options.data)
-      ajaxOptions.data = options.data
-    }
-
-    ajaxCallDetails.headers = ajaxOptions.headers
-    ajaxCallDetails.postData = options.data
-    $.ajax(ajaxOptions)
   }
 
   performAjaxGet(url, successOptions, failureOptions, headers, corsRequest) {

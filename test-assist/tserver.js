@@ -55,12 +55,12 @@ class TestServer {
 
   _handlePostForm() {
     return function (req, res) {
-      const user_id = req.body.id
+      const userId = req.body.id
       const token = req.body.token
       const geo = req.body.geo
       res.setHeader('Content-Type', 'text/plain')
       res.write('you posted:\n')
-      res.end(user_id + ' ' + token + ' ' + geo)
+      res.end(userId + ' ' + token + ' ' + geo)
     }
   }
 

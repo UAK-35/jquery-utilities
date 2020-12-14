@@ -1,7 +1,4 @@
-jquery-utilities
-=========
-A set of tools based on jQuery
-
+# jquery-utilities
 [![GitHub](https://img.shields.io/github/license/UAK-35/jquery-utilities?color=yellow)](https://github.com/UAK-35/jquery-utilities/blob/main/LICENSE)
 [![npm version](https://badge.fury.io/js/%40uak2020%2Fjquery-utilities.svg)](https://badge.fury.io/js/%40uak2020%2Fjquery-utilities)
 [![Build Status](https://travis-ci.com/UAK-35/jquery-utilities.svg?token=b6yC3xZ4n29K1aBw3JL6&branch=main)](https://travis-ci.com/UAK-35/jquery-utilities)
@@ -13,13 +10,20 @@ A set of tools based on jQuery
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-99.53%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-85.48%25-yellow.svg) | ![Functions](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)    |
+| ![Statements](https://img.shields.io/badge/Coverage-99.54%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-87.5%25-yellow.svg) | ![Functions](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)    |
+
+
+## About
+
+A set of tools based on jQuery
+- Tool 1 - jQuery AJAX Manager
 
 ## Installation
 
 `npm install @uak2020/jquery-utilities`
 
 ## Usage
+### Tool 1 Usage - jQuery AJAX Manager
 
     var { JqAjaxManager, UserInteraction, JsHelper } = require('@uak2020/jquery-utilities');
 

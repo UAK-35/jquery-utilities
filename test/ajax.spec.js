@@ -5,6 +5,23 @@ const {expect} = require('chai')
 const {JqAjaxManager, UserInteraction, JsHelper} = require('../index')
 const TestServer = require('../test-assist/tserver')
 
+const pageLoadSuccessMessage = 'page loaded'
+const pageLoadErrorMessage = 'page load error'
+const localServerBaseUrl = 'http://localhost:5000/test'
+const rawSampleStringToPost = 'id|4+token|NULL-TOKEN3+geo|us'
+const dataSubmissionSuccessMessage = 'data submitted'
+const dataSubmissionErrorMessage = 'data submission error'
+const sampleFormDataStringToPost = 'id=4&token=NULL-TOKEN3&geo=us'
+const sampleRequestOriginHeaderInfo = [{name: 'origin', value: 'http://localhost'}]
+const remoteServerBaseUrl = 'https://uak2020.herokuapp.com/test'
+
+function createAjaxManager() {
+  const ajaxManager = new JqAjaxManager()
+  ajaxManager.userInteraction = new UserInteraction()
+  ajaxManager.jsHelper = new JsHelper()
+  return ajaxManager
+}
+
 describe('suite for local server AJAX tests', () => {
   let ajaxMgr
   const testServer = new TestServer()
@@ -13,9 +30,7 @@ describe('suite for local server AJAX tests', () => {
     testServer.setUp()
   })
   beforeEach(() => {
-    ajaxMgr = new JqAjaxManager()
-    ajaxMgr.userInteraction = new UserInteraction()
-    ajaxMgr.jsHelper = new JsHelper()
+    ajaxMgr = createAjaxManager()
   })
   after(() => {
     testServer.tearDown()
@@ -23,9 +38,9 @@ describe('suite for local server AJAX tests', () => {
 
   it('should return error for invalid/missing request-response accept header', (done) => {
     ajaxMgr.performAjaxInvalid(
-      'http://localhost:5000/test',
+      localServerBaseUrl,
       {
-        successMessage: 'page loaded',
+        successMessage: pageLoadSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -33,7 +48,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'page load error',
+        failureMessage: pageLoadErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('error')
           done(errorThrown)
@@ -44,9 +59,9 @@ describe('suite for local server AJAX tests', () => {
 
   it('should successfully return html of local page', (done) => {
     ajaxMgr.performAjaxGet(
-      'http://localhost:5000/test',
+      localServerBaseUrl,
       {
-        successMessage: 'page loaded',
+        successMessage: pageLoadSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -54,7 +69,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'page load error',
+        failureMessage: pageLoadErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
@@ -65,7 +80,7 @@ describe('suite for local server AJAX tests', () => {
 
   it('should successfully return data from local JSON file', (done) => {
     ajaxMgr.performAjaxGetJson(
-      'http://localhost:5000/test/json',
+      localServerBaseUrl + '/json',
       {
         successMessage: 'json loaded',
         // eslint-disable-next-line no-unused-vars
@@ -86,10 +101,10 @@ describe('suite for local server AJAX tests', () => {
 
   it('should return error for invalid/missing request-response accept header or request content type header', (done) => {
     ajaxMgr.performAjaxPostInvalid(
-      'http://localhost:5000/test',
-      'id|4+token|sdfa3+geo|us',
+      localServerBaseUrl,
+      rawSampleStringToPost,
       {
-        successMessage: 'page loaded',
+        successMessage: pageLoadSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -97,7 +112,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'page load error',
+        failureMessage: pageLoadErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('error')
           done(errorThrown)
@@ -108,10 +123,10 @@ describe('suite for local server AJAX tests', () => {
 
   it('should successfully post text data to local server', (done) => {
     ajaxMgr.performAjaxPost(
-      'http://localhost:5000/test/postraw',
-      'id|4+token|sdfa3+geo|us',
+      localServerBaseUrl + '/postraw',
+      rawSampleStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -119,7 +134,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
@@ -130,10 +145,10 @@ describe('suite for local server AJAX tests', () => {
 
   it('should successfully post text data to local server and receive json', (done) => {
     ajaxMgr.performAjaxPostGetJson(
-      'http://localhost:5000/test/postrawforjson',
-      'id|4+token|sdfa3+geo|us',
+      localServerBaseUrl + '/postrawforjson',
+      rawSampleStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -141,7 +156,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
@@ -152,10 +167,10 @@ describe('suite for local server AJAX tests', () => {
 
   it('should successfully post form data to local server', (done) => {
     ajaxMgr.performAjaxPostForm(
-      'http://localhost:5000/test/postform',
-      'id=4&token=sdfa3&geo=us',
+      localServerBaseUrl + '/postform',
+      sampleFormDataStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -163,7 +178,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
@@ -174,10 +189,10 @@ describe('suite for local server AJAX tests', () => {
 
   it('should successfully post form data to local server and receive json', (done) => {
     ajaxMgr.performAjaxPostFormGetJson(
-      'http://localhost:5000/test/postformforjson',
-      'id=4&token=sdfa3&geo=us',
+      localServerBaseUrl + '/postformforjson',
+      sampleFormDataStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -185,7 +200,7 @@ describe('suite for local server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
@@ -197,7 +212,7 @@ describe('suite for local server AJAX tests', () => {
   it('should successfully post JSON data to local server', (done) => {
     const postData = '{"id": 1, "email": "test.mail@example.com", "first_name": "Test", "last_name": "User", "avatar": "https://reqres.in/img/faces/2-image.jpg"}'
     ajaxMgr.performAjaxPostJson(
-      'http://localhost:5000/test/postjson',
+      localServerBaseUrl + '/postjson',
       postData,
       {
         successMessage: 'json submitted',
@@ -222,16 +237,14 @@ describe('suite for cross domain live server AJAX tests', () => {
   let ajaxMgr
 
   beforeEach(() => {
-    ajaxMgr = new JqAjaxManager()
-    ajaxMgr.userInteraction = new UserInteraction()
-    ajaxMgr.jsHelper = new JsHelper()
+    ajaxMgr = createAjaxManager()
   })
 
   it('should return error for cors request online', (done) => {
-    ajaxMgr.performCrossDomainAjaxGet(
+    ajaxMgr.performCorsAjaxGet(
       'https://www.google.com/',
       {
-        successMessage: 'page loaded',
+        successMessage: pageLoadSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -239,21 +252,21 @@ describe('suite for cross domain live server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'page load error',
+        failureMessage: pageLoadErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('error')
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully return html of an online page', (done) => {
-    ajaxMgr.performCrossDomainAjaxGet(
-      'https://uak2020.herokuapp.com/test',
+    ajaxMgr.performCorsAjaxGet(
+      remoteServerBaseUrl,
       {
-        successMessage: 'page loaded',
+        successMessage: pageLoadSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -261,19 +274,19 @@ describe('suite for cross domain live server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'page load error',
+        failureMessage: pageLoadErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully return json present at given uri online', (done) => {
-    ajaxMgr.performCrossDomainAjaxGetJson(
-      'https://uak2020.herokuapp.com/test/json',
+    ajaxMgr.performCorsAjaxGetJson(
+      remoteServerBaseUrl + '/json',
       {
         successMessage: 'json loaded',
         // eslint-disable-next-line no-unused-vars
@@ -289,16 +302,16 @@ describe('suite for cross domain live server AJAX tests', () => {
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully post text data to live server', (done) => {
-    ajaxMgr.performCrossDomainAjaxPost(
-      'https://uak2020.herokuapp.com/test/postraw',
-      'id|4+token|sdfa3+geo|us',
+    ajaxMgr.performCorsAjaxPost(
+      remoteServerBaseUrl + '/postraw',
+      rawSampleStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -306,22 +319,22 @@ describe('suite for cross domain live server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully post text data to live server and receive json', (done) => {
-    ajaxMgr.performCrossDomainAjaxPostGetJson(
-      'https://uak2020.herokuapp.com/test/postrawforjson',
-      'id|4+token|sdfa3+geo|us',
+    ajaxMgr.performCorsAjaxPostGetJson(
+      remoteServerBaseUrl + '/postrawforjson',
+      rawSampleStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -329,22 +342,22 @@ describe('suite for cross domain live server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully post form data to live server', (done) => {
-    ajaxMgr.performCrossDomainAjaxPostForm(
-      'https://uak2020.herokuapp.com/test/postform',
-      'id=4&token=sdfa3&geo=us',
+    ajaxMgr.performCorsAjaxPostForm(
+      remoteServerBaseUrl + '/postform',
+      sampleFormDataStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -352,22 +365,22 @@ describe('suite for cross domain live server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully post form data to live server and receive json', (done) => {
-    ajaxMgr.performCrossDomainAjaxPostFormGetJson(
-      'https://uak2020.herokuapp.com/test/postformforjson',
-      'id=4&token=sdfa3&geo=us',
+    ajaxMgr.performCorsAjaxPostFormGetJson(
+      remoteServerBaseUrl + '/postformforjson',
+      sampleFormDataStringToPost,
       {
-        successMessage: 'data submitted',
+        successMessage: dataSubmissionSuccessMessage,
         // eslint-disable-next-line no-unused-vars
         successCallback: function (result, url, textStatus) {
           expect(textStatus).to.equal('success')
@@ -375,20 +388,20 @@ describe('suite for cross domain live server AJAX tests', () => {
         },
       },
       {
-        failureMessage: 'data submission error',
+        failureMessage: dataSubmissionErrorMessage,
         failureCallback: function (textStatus, errorThrown) {
           expect(textStatus).to.equal('success')
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 
   it('should successfully post JSON data to live server', (done) => {
     const postData = {id: 1, email: 'test.mail@example.com', first_name: 'Test', last_name: 'User', avatar: 'https://reqres.in/img/faces/2-image.jpg'}
-    ajaxMgr.performCrossDomainAjaxPostJson(
-      'https://uak2020.herokuapp.com/test/postjson',
+    ajaxMgr.performCorsAjaxPostJson(
+      remoteServerBaseUrl + '/postjson',
       postData,
       {
         successMessage: 'json submitted',
@@ -405,7 +418,7 @@ describe('suite for cross domain live server AJAX tests', () => {
           done(errorThrown)
         },
       },
-      [{name: 'origin', value: 'http://localhost'}]
+      sampleRequestOriginHeaderInfo
     )
   })
 })
