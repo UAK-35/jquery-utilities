@@ -66,13 +66,11 @@ class JqAjaxHandler {
     return function (result, textStatus, jqXHR) {
       $this._logDetails($this._userInteraction, $this._jsHelper, result, textStatus, jqXHR, ajaxCallDetails)
 
-      if (textStatus === 'success') {
-        if (successOptions.successMessage) {
-          $this._userInteraction.successAlert(successOptions.successMessage)
-        }
-        if (successOptions.successCallback) {
-          successOptions.successCallback(result, options.url, textStatus)
-        }
+      if (successOptions.successMessage) {
+        $this._userInteraction.successAlert(successOptions.successMessage)
+      }
+      if (successOptions.successCallback) {
+        successOptions.successCallback(result, options.url, textStatus)
       }
     }
   }

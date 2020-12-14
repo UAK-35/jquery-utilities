@@ -1,7 +1,8 @@
 /** @format */
 
-const JqAjaxManager = require('./src/ajax')
+const JqAjaxGetManager = require('./src/ajaxGet')
+const JqAjaxPostManager = require('./src/ajaxPost')
 const UserInteraction = require('./src/userInteraction')
 const JsHelper = require('./src/jsHelper')
 
-module.exports = {JqAjaxManager, UserInteraction, JsHelper}
+module.exports = {JqAjaxGetManager, JqAjaxPostManager, UserInteraction, JsHelper}

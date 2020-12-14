@@ -10,7 +10,7 @@
 
 | Statements                  | Branches                | Functions                 | Lines                |
 | --------------------------- | ----------------------- | ------------------------- | -------------------- |
-| ![Statements](https://img.shields.io/badge/Coverage-99.54%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-87.5%25-yellow.svg) | ![Functions](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)    |
+| ![Statements](https://img.shields.io/badge/Coverage-99.54%25-brightgreen.svg) | ![Branches](https://img.shields.io/badge/Coverage-89.06%25-yellow.svg) | ![Functions](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg) | ![Lines](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)    |
 
 
 ## About
@@ -25,14 +25,14 @@ A set of tools based on jQuery
 ## Usage
 ### Tool 1 Usage - jQuery AJAX Manager
 
-    var { JqAjaxManager, UserInteraction, JsHelper } = require('@uak2020/jquery-utilities');
+    var { JqAjaxGetManager, UserInteraction, JsHelper } = require('@uak2020/jquery-utilities');
 
     var userInteraction = new UserInteraction();
     var jsHelper = new JsHelper();
-    var ajaxMgr = new JqAjaxManager();
-    ajaxMgr.userInteraction = userInteraction;
-    ajaxMgr.jsHelper = jsHelper;
-    ajaxMgr.performAjaxGet(
+    var ajaxGetMgr = new JqAjaxGetManager();
+    ajaxGetMgr.userInteraction = userInteraction;
+    ajaxGetMgr.jsHelper = jsHelper;
+    ajaxGetMgr.performAjaxGet(
         'http://localhost:5000/test',
         {
             successMessage: 'page loaded',
