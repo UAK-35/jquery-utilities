@@ -16,12 +16,16 @@ class JqAjaxHeadersManager {
       }
   }
 
-  _addContentTypeRequestHeader(contentType) {
-    if (contentType.length > 0) this._addToHeaders([{name: 'Content-Type', value: contentType}])
+  _addRequestHeader(headerName, headerValue) {
+    this._addToHeaders([{name: headerName, value: headerValue}])
   }
 
-  _addAcceptResponseRequestHeader(contentType) {
-    if (contentType.length > 0) this._addToHeaders([{name: 'Accept', value: contentType}])
+  _addContentTypeRequestHeader(contentType) {
+    if (contentType.length > 0) this._addRequestHeader('Content-Type', contentType)
+  }
+
+  _addAcceptResponseRequestHeader(acceptType) {
+    if (acceptType.length > 0) this._addRequestHeader('Accept', acceptType)
   }
 
   _getAcceptType(responseAcceptType) {
