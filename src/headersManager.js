@@ -44,7 +44,7 @@ class JqAjaxHeadersManager {
     this._addAcceptResponseRequestHeader(this._getAcceptType(responseAcceptType))
   }
 
-  _getContentType(requestContentType) {
+  _getContentType(requestContentType, boundary) {
     switch (requestContentType) {
       case 'raw':
         return 'text/plain'
@@ -52,17 +52,26 @@ class JqAjaxHeadersManager {
         return 'application/json'
       case 'form':
         return 'application/x-www-form-urlencoded'
-      // case 'multi-part-form':
-      //   return 'multipart/form-data'
+      case 'multi-part-form':
+        return 'multipart/form-data; boundary=' + boundary
       default:
         return ''
     }
   }
 
-  setForPost(headers, requestContentType, responseAcceptType) {
+  setForPost(headers, requestContentType, responseAcceptType, length, boundary) {
     this._addToHeaders(headers)
-    this._addContentTypeRequestHeader(this._getContentType(requestContentType))
+    this._addContentTypeRequestHeader(this._getContentType(requestContentType, boundary))
+    if (requestContentType === 'multi-part-form') {
+      this._addRequestHeader('Cache-Control', 'no-cache')
+      this._addRequestHeader('Content-Length', length)
+      this._addRequestHeader('Host', 'http://localhost')
+      // this._addRequestHeader('User-Agent', 'PostmanRuntime/7.26.8')
+      this._addRequestHeader('Accept-Encoding', 'gzip, deflate, br')
+      this._addRequestHeader('Connection', 'keep-alive')
+    }
     this._addAcceptResponseRequestHeader(this._getAcceptType(responseAcceptType))
+    // console.log('headers = ' + JSON.stringify(this._headers, null, 2))
   }
 }
 

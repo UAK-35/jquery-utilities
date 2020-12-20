@@ -19,7 +19,7 @@ class JqAjaxGetManager {
 
   _performGet(responseAcceptType, url, headers, successOptions, failureOptions, corsRequest) {
     this._headersManager.setForGet(headers, responseAcceptType)
-    this._ajaxHandler.performAjaxGet(url, successOptions, failureOptions, this._headersManager.headers, corsRequest)
+    this._ajaxHandler.performGet(url, successOptions, failureOptions, this._headersManager.headers, corsRequest)
   }
 
   // GET methods below (LOCAL)

@@ -10,6 +10,7 @@ class JsHelper {
   }
 
   excerpt(str, length) {
+    if (!str) return null
     if (str.length > length) {
       str = str.substring(0, length) + '...'
     }
