@@ -62,9 +62,9 @@ class JqAjaxPostManager {
     this._performPostMultipart(multiPartFormType, 'raw', url, multiPart, headers, successOptions, failureOptions)
   }
 
-  // performAjaxPostMultiPartFormGetJson(url, multiPart, successOptions, failureOptions, headers) {
-  //   this._performPostMultipart(multiPartFormType, 'json', url, multiPart, headers, successOptions, failureOptions);
-  // }
+  performAjaxPostMultiPartFormGetJson(url, multiPart, successOptions, failureOptions, headers) {
+    this._performPostMultipart(multiPartFormType, 'json', url, multiPart, headers, successOptions, failureOptions)
+  }
 
   performAjaxPostJson(url, postData, successOptions, failureOptions, headers) {
     this._performPost('json', 'json', url, postData, headers, successOptions, failureOptions)
@@ -92,9 +92,9 @@ class JqAjaxPostManager {
     this._performPostMultipart(multiPartFormType, 'raw', url, multiPart, headers, successOptions, failureOptions, true)
   }
 
-  // performCorsAjaxPostMultiPartFormGetJson(url, multiPart, successOptions, failureOptions, headers) {
-  //   this._performPostMultipart(multiPartFormType, 'json', url, multiPart, headers, successOptions, failureOptions, true);
-  // }
+  performCorsAjaxPostMultiPartFormGetJson(url, multiPart, successOptions, failureOptions, headers) {
+    this._performPostMultipart(multiPartFormType, 'json', url, multiPart, headers, successOptions, failureOptions, true)
+  }
 
   performCorsAjaxPostJson(url, postData, successOptions, failureOptions, headers) {
     this._performPost('json', 'json', url, postData, headers, successOptions, failureOptions, true)

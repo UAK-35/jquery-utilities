@@ -197,6 +197,24 @@ describe('suite for local server AJAX request tests', () => {
       )
     })
 
+    it('should return error for missing POST data - NO CALLBACKS', (done) => {
+      try {
+        ajaxPostMgr.performAjaxPost(
+          localServerBaseUrl,
+          '',
+          {
+            successMessage: pageLoadSuccessMessage,
+          },
+          {
+            failureMessage: pageLoadErrorMessage,
+          }
+        )
+      } catch (e) {
+        expect(e.message).to.equal('POST request has no data to send')
+        done()
+      }
+    })
+
     it('should return error when builder filename and filepath point to files of different type', (done) => {
       expect(() => {
         const multipartBuilder = new MultiPartBuilder()
@@ -330,7 +348,7 @@ describe('suite for local server AJAX request tests', () => {
       multipartBuilder.start()
       multipartBuilder.addDataMultiPart('name', 'user-01a')
       multipartBuilder.addDataMultiPart('json', '[1,3,8,91]')
-      multipartBuilder.addFileMultiPart('file', path.join(__dirname + '/../test-assist/zm.png'))
+      multipartBuilder.addFileMultiPart('file', path.join(__dirname + '/../test-assist/yu.png'))
       multipartBuilder.build()
 
       // console.log('builder data length = ' + multipartBuilder.requestLength)
@@ -399,6 +417,35 @@ describe('suite for local server AJAX request tests', () => {
 
       ajaxPostMgr.performAjaxPostMultiPartForm(
         localServerBaseUrl + '/postformfiles',
+        multipartBuilder,
+        {
+          successMessage: dataSubmissionSuccessMessage,
+          // eslint-disable-next-line no-unused-vars
+          successCallback: function (result, url, textStatus) {
+            expect(textStatus).to.equal(ajaxSuccessTextStatus)
+            done()
+          },
+        },
+        {
+          failureMessage: dataSubmissionErrorMessage,
+          failureCallback: function (textStatus, errorThrown) {
+            expect(textStatus).to.equal(ajaxSuccessTextStatus)
+            done(errorThrown)
+          },
+        }
+      )
+    }).timeout(10000)
+
+    it('should successfully post multi-part form data with multiple files to local server and receive json', (done) => {
+      const multipartBuilder = new MultiPartBuilder()
+      multipartBuilder.start()
+      multipartBuilder.addDataMultiPart('name', 'user-011')
+      multipartBuilder.addDataMultiPart('json', '[1,3,8,21]')
+      multipartBuilder.addFileMultiPart('file', path.join(__dirname + '/../test-assist/zm.png'))
+      multipartBuilder.build()
+
+      ajaxPostMgr.performAjaxPostMultiPartFormGetJson(
+        localServerBaseUrl + '/postformfileforjson',
         multipartBuilder,
         {
           successMessage: dataSubmissionSuccessMessage,
@@ -714,6 +761,36 @@ describe('suite for cross domain live server AJAX tests', () => {
           },
         },
         sampleRequestOriginHeaderInfo
+      )
+    }).timeout(10000)
+
+    it('should successfully post multi-part form data with multiple files to live server and receive json', (done) => {
+      const multipartBuilder = new MultiPartBuilder()
+      multipartBuilder.start()
+      multipartBuilder.addDataMultiPart('name', 'user-012')
+      multipartBuilder.addDataMultiPart('json', '[1,3,8,22]')
+      multipartBuilder.addFileMultiPart('image_files', path.join(__dirname + '/../test-assist/yu.png'))
+      multipartBuilder.addFileMultiPart('image_files', path.join(__dirname + '/../test-assist/za.png'))
+      multipartBuilder.build()
+
+      ajaxPostMgr.performCorsAjaxPostMultiPartFormGetJson(
+        remoteServerBaseUrl + '/postformfilesforjson',
+        multipartBuilder,
+        {
+          successMessage: dataSubmissionSuccessMessage,
+          // eslint-disable-next-line no-unused-vars
+          successCallback: function (result, url, textStatus) {
+            expect(textStatus).to.equal(ajaxSuccessTextStatus)
+            done()
+          },
+        },
+        {
+          failureMessage: dataSubmissionErrorMessage,
+          failureCallback: function (textStatus, errorThrown) {
+            expect(textStatus).to.equal(ajaxSuccessTextStatus)
+            done(errorThrown)
+          },
+        }
       )
     }).timeout(10000)
 

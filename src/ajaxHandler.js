@@ -4,6 +4,8 @@ const {JSDOM} = require('jsdom')
 const {window} = new JSDOM('')
 const $ = require('jquery')(window)
 
+const XHR_STATUS_CONSOLE_MSG_HEADER = 'XHR-status = '
+
 class JqAjaxHandler {
   _userInteraction
   _jsHelper
@@ -25,12 +27,18 @@ class JqAjaxHandler {
     this._jsHelper = value
   }
 
+  _logDataReceived(success, jqXHR, textStatus, ajaxCallDetails) {
+    if (jqXHR.responseJSON !== undefined) this._userInteraction.logjson(XHR_STATUS_CONSOLE_MSG_HEADER + jqXHR.status + '; XHR-response-json = ', jqXHR.responseJSON)
+    else this._userInteraction.logit(XHR_STATUS_CONSOLE_MSG_HEADER + jqXHR.status + '; XHR-response-text = ' + jqXHR.responseText)
+    this._userInteraction.logjson('AJAX ajax call details = ', ajaxCallDetails)
+    if (success) this._userInteraction.logit('status = ' + textStatus)
+    else this._userInteraction.errlogit('status = ' + textStatus)
+  }
+
   _logDetails(result, textStatus, jqXHR, ajaxCallDetails) {
     const excerptLength = 200
     console.group('AJAX SUCCESS')
-    this._userInteraction.logit('XHR-status = ' + jqXHR.status + '; XHR-response-text = ' + this._jsHelper.excerpt(jqXHR.responseText, excerptLength))
-    this._userInteraction.logit('status = ' + textStatus)
-    this._userInteraction.logjson('AJAX ajax call details = ', ajaxCallDetails)
+    this._logDataReceived(true, jqXHR, textStatus, ajaxCallDetails)
     if (this._jsHelper.isStringVar(result)) {
       if (result.indexOf('<!DOCTYPE ') === 0) this._userInteraction.logit('DATA RECEIVED - HTML PAGE = ' + this._jsHelper.excerpt(result, excerptLength))
       else this._userInteraction.logit('DATA RECEIVED - STRING/TEXT = ' + result)
@@ -52,6 +60,9 @@ class JqAjaxHandler {
       ajaxOptions.crossOrigin = true
     }
     this._userInteraction.logit('corsRequest = ' + corsRequest)
+    if (headers.find((h) => h.name === 'Accept' && h.value === 'application/json') !== undefined) {
+      ajaxOptions.dataType = 'json'
+    }
     return ajaxOptions
   }
 
@@ -74,11 +85,9 @@ class JqAjaxHandler {
     return function (jqXHR, textStatus, errorThrown) {
       // textStatus >> "timeout", "error", "abort", and "parsererror"
       console.group('AJAX FAILURE')
-      $this._userInteraction.logit('XHR-status = ' + jqXHR.status + '; XHR-response-text = ' + jqXHR.responseText)
-      $this._userInteraction.errlogit('AJAX ERROR status = ' + textStatus)
+      $this._logDataReceived(false, jqXHR, textStatus, ajaxCallDetails)
       $this._userInteraction.errlogitjson('AJAX ERROR thrown = ', errorThrown)
       $this._userInteraction.errlogitjson('AJAX ERROR DETAILS = ', jqXHR)
-      $this._userInteraction.logjson('AJAX ajax call details = ', ajaxCallDetails)
       console.groupEnd()
       if (failureOptions.failureMessage) {
         $this._userInteraction.errorAlert(failureOptions.failureMessage)
@@ -129,7 +138,7 @@ class JqAjaxHandler {
   }
 
   _performAjax(options, postData, successOptions, failureOptions, headers, corsRequest) {
-    if (corsRequest === null || corsRequest === undefined) corsRequest = false
+    corsRequest || (corsRequest = false)
     const ajaxCallDetails = {corsRequest: corsRequest, httpMethod: options.type, url: options.url}
 
     try {
@@ -148,7 +157,7 @@ class JqAjaxHandler {
       $.ajax(ajaxOptions)
     } catch (e) {
       if (failureOptions.failureCallback) failureOptions.failureCallback('error', e)
-      // else throw e
+      else throw e
     }
   }
 
