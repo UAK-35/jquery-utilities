@@ -403,20 +403,16 @@ describe('suite for local server AJAX request tests', () => {
       )
     }).timeout(15000)
 
-    it('should successfully post multi-part form data with multiple files to local server', (done) => {
+    it('should successfully post multi-part form data with single files to local server and receive json', (done) => {
       const multipartBuilder = new MultiPartBuilder()
       multipartBuilder.start()
-      multipartBuilder.addDataMultiPart('name', 'user-01')
-      multipartBuilder.addDataMultiPart('json', '[1,3,8,20]')
-      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/nu.png'))
-      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mt.png'))
-      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mu.png'))
-      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mv.png'))
-      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mw.png'))
+      multipartBuilder.addDataMultiPart('name', 'user-011')
+      multipartBuilder.addDataMultiPart('json', '[1,3,8,21]')
+      multipartBuilder.addFileMultiPart('file', path.join(__dirname + '/../test-assist/zm.png'))
       multipartBuilder.build()
 
-      ajaxPostMgr.performAjaxPostMultiPartForm(
-        localServerBaseUrl + '/postformfiles',
+      ajaxPostMgr.performAjaxPostMultiPartFormGetJson(
+        localServerBaseUrl + '/postformfileforjson',
         multipartBuilder,
         {
           successMessage: dataSubmissionSuccessMessage,
@@ -436,16 +432,20 @@ describe('suite for local server AJAX request tests', () => {
       )
     }).timeout(10000)
 
-    it('should successfully post multi-part form data with multiple files to local server and receive json', (done) => {
+    it('should successfully post multi-part form data with multiple files to local server', (done) => {
       const multipartBuilder = new MultiPartBuilder()
       multipartBuilder.start()
-      multipartBuilder.addDataMultiPart('name', 'user-011')
-      multipartBuilder.addDataMultiPart('json', '[1,3,8,21]')
-      multipartBuilder.addFileMultiPart('file', path.join(__dirname + '/../test-assist/zm.png'))
+      multipartBuilder.addDataMultiPart('name', 'user-01')
+      multipartBuilder.addDataMultiPart('json', '[1,3,8,20]')
+      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/nu.png'))
+      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mt.png'))
+      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mu.png'))
+      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mv.png'))
+      multipartBuilder.addFileMultiPart('files', path.join(__dirname + '/../test-assist/mw.png'))
       multipartBuilder.build()
 
-      ajaxPostMgr.performAjaxPostMultiPartFormGetJson(
-        localServerBaseUrl + '/postformfileforjson',
+      ajaxPostMgr.performAjaxPostMultiPartForm(
+        localServerBaseUrl + '/postformfiles',
         multipartBuilder,
         {
           successMessage: dataSubmissionSuccessMessage,
